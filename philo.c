@@ -7,14 +7,13 @@ void	ft_initialize_value(t_philosopher *philo)
 	philo->id = 0;
 	philo->left_fork = 0;
 	philo->right_fork = 0;
-	philo->number_of_philosophers = 0;
+	philo->num_of_philo = 0;
 	philo->time_to_eat = 0;
 	philo->time_to_sleep = 0;
 	philo->time_to_die = 0;
 	philo->semaphore = 1;
 	philo->think = 0;
 	philo->eat = 0;
-
 }
 void	*thread_function(void *arg)
 {
@@ -35,14 +34,14 @@ void	ft_initialize_data(t_philosopher *philosophers, t_check argument)
 	int	i;
 
 	i = 0;
-	while (i < argument.number_of_philosophers)
+	while (i < argument.num_of_philo)
 	{
 		philosophers[i].id = i + 1;
 		philosophers[i].right_fork = i;
 		philosophers[i].left_fork = i - 1;
 		if (i == 0)
-			philosophers[i].left_fork = argument.number_of_philosophers - 1;
-		philosophers[i].number_of_philosophers = argument.number_of_philosophers;
+			philosophers[i].left_fork = argument.num_of_philo - 1;
+		philosophers[i].num_of_philo = argument.num_of_philo;
 		philosophers[i].time_to_die = argument.time_to_die;
 		philosophers[i].time_to_eat = argument.time_to_eat;
 		philosophers[i].time_to_sleep = argument.time_to_sleep;
@@ -57,7 +56,7 @@ void	create_philos(t_philosopher *philosophers, t_check argument)
 	i = 0;
 	ft_initialize_data(philosophers, argument);
 	i = 0;
-	while (i < argument.number_of_philosophers)
+	while (i < argument.num_of_philo)
 	{
 		if (pthread_create(&philosophers[i].theard, NULL, thread_function,
 				&philosophers[i]) != 0)
@@ -68,7 +67,7 @@ void	create_philos(t_philosopher *philosophers, t_check argument)
 		i++;
 	}
 	i = 0;
-	while (i < argument.number_of_philosophers)
+	while (i < argument.num_of_philo)
 	{
 		if (pthread_join(philosophers[i].theard, NULL) != 0)
 		{
@@ -81,8 +80,7 @@ void	create_philos(t_philosopher *philosophers, t_check argument)
 
 int	ft_check_arg(t_check argument)
 {
-	if (argument.number_of_philosophers <= 0 || argument.time_to_die <= 0
-		|| argument.time_to_eat <= argument.time_to_sleep)
+	if (argument.num_of_philo <= 0 || argument.time_to_die <= 0)
 	{
 		ft_put_error("We do not allow the use of zero or negative numbers as arguments.");
 		return (0);
@@ -95,20 +93,20 @@ void	ft_start_threads(char **av)
 	t_check			argument;
 
 	philosophers = NULL;
-	argument.number_of_philosophers = atoi(av[1]);
-	argument.time_to_eat = atoi(av[2]);
-	argument.time_to_sleep = atoi(av[3]);
-	argument.time_to_die = atoi(av[4]);
+	argument.num_of_philo = ft_atoi(av[1]);
+	argument.time_to_eat = ft_atoi(av[2]);
+	argument.time_to_sleep = ft_atoi(av[3]);
+	argument.time_to_die = ft_atoi(av[4]);
+	if (av[5])
+		argument.philo_eat_limit = ft_atoi(av[5]);
+	else
+		argument.philo_eat_limit = 0;
 	if (!ft_check_arg(argument))
 		return ;
-	philosophers = malloc(argument.number_of_philosophers
-			* sizeof(t_philosopher));
+	philosophers = malloc(argument.num_of_philo * sizeof(t_philosopher));
 	if (!philosophers)
 		return ;
-	philosophers->number_of_philosophers = argument.number_of_philosophers;
-	philosophers->time_to_die = argument.time_to_die;
-	philosophers->time_to_eat = argument.time_to_eat;
-	philosophers->time_to_sleep = argument.time_to_sleep;
+	philosophers->data = argument;
 	create_philos(philosophers, argument);
 }
 int	main(int ac, char **av)

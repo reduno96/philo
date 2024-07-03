@@ -1,6 +1,7 @@
 SRC= philo.c \
 	 errors.c \
 	 ft_state.c \
+	 utils.c \
 
 OBJ= ${SRC:%.c=%.o}
 

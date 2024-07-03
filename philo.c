@@ -7,59 +7,50 @@ void	ft_initialize_value(t_philosopher *philo)
 	philo->id = 0;
 	philo->left_fork = 0;
 	philo->right_fork = 0;
-	philo->num_of_philo = 0;
-	philo->time_to_eat = 0;
-	philo->time_to_sleep = 0;
-	philo->time_to_die = 0;
-	philo->semaphore = 1;
 	philo->think = 0;
 	philo->eat = 0;
 }
 void	*thread_function(void *arg)
 {
-	t_philosopher	*philosopher;
+	t_philosopher	*philo;
 
-	philosopher = (t_philosopher *)arg;
+	philo = (t_philosopher *)arg;
 	while (1)
 	{
-		thinking(philosopher);
-		// eating(philosopher);
-		// sleeping(philosopher);
+
+		thinking(philo);
+		// eating(philo);
+		// sleeping(philo);
 	}
 	return (NULL);
 }
 
-void	ft_initialize_data(t_philosopher *philosophers, t_check argument)
+void	ft_initialize_data(t_philosopher *philo)
 {
 	int	i;
 
 	i = 0;
-	while (i < argument.num_of_philo)
+	while (i < philo->data.num_of_philo)
 	{
-		philosophers[i].id = i + 1;
-		philosophers[i].right_fork = i;
-		philosophers[i].left_fork = i - 1;
+		philo[i].id = i + 1;
+		philo[i].right_fork = i;
+		philo[i].left_fork = i - 1;
 		if (i == 0)
-			philosophers[i].left_fork = argument.num_of_philo - 1;
-		philosophers[i].num_of_philo = argument.num_of_philo;
-		philosophers[i].time_to_die = argument.time_to_die;
-		philosophers[i].time_to_eat = argument.time_to_eat;
-		philosophers[i].time_to_sleep = argument.time_to_sleep;
+			philo[i].left_fork = philo->data.num_of_philo;
 		i++;
 	}
 }
 
-void	create_philos(t_philosopher *philosophers, t_check argument)
+void	create_philos(t_philosopher *philo)
 {
 	int	i;
 
 	i = 0;
-	ft_initialize_data(philosophers, argument);
 	i = 0;
-	while (i < argument.num_of_philo)
+	while (i < philo->data.num_of_philo)
 	{
-		if (pthread_create(&philosophers[i].theard, NULL, thread_function,
-				&philosophers[i]) != 0)
+		if (pthread_create(&philo[i].theard, NULL, thread_function,
+				&philo[i]) != 0)
 		{
 			ft_put_error("Failed to Create The Theard");
 			return ;
@@ -67,9 +58,9 @@ void	create_philos(t_philosopher *philosophers, t_check argument)
 		i++;
 	}
 	i = 0;
-	while (i < argument.num_of_philo)
+	while (i < philo->data.num_of_philo)
 	{
-		if (pthread_join(philosophers[i].theard, NULL) != 0)
+		if (pthread_join(philo[i].theard, NULL) != 0)
 		{
 			ft_put_error("Failed To Join Thread");
 			return ;
@@ -107,7 +98,8 @@ void	ft_start_threads(char **av)
 	if (!philosophers)
 		return ;
 	philosophers->data = argument;
-	create_philos(philosophers, argument);
+	ft_initialize_data(philosophers);
+	create_philos(philosophers);
 }
 int	main(int ac, char **av)
 {

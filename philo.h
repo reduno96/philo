@@ -22,16 +22,11 @@ typedef struct s_philosopher
 	int			id;
 	int			left_fork;
 	int			right_fork;
-	int			num_of_philo;
-	int			time_to_die;
-	int			time_to_eat;
-	int			time_to_sleep;
-	int			philo_eat_limit;
 	t_check		data;
-	int			semaphore;
 	int			think;
 	int			eat;
 }				t_philosopher;
+
 
 void			ft_put_error(char *s);
 void			thinking(t_philosopher *philosopher);

@@ -2,55 +2,61 @@
 #include <pthread.h>
 #include <stdio.h>
 
+pthread_mutex_t	mutex;
+int				mails = 0;
+
 void	ft_initialize_value(t_philosopher *philo)
 {
-	philo->id = 0;
-	philo->left_fork = 0;
-	philo->right_fork = 0;
 	philo->think = 0;
-	philo->eat = 0;
+	philo->eating = 0;
+	philo->last_meal = 0;
+	philo->data->end = 1;
 }
-void	*thread_function(void *arg)
+void	*routine(void *arg)
 {
 	t_philosopher	*philo;
 
 	philo = (t_philosopher *)arg;
-	while (1)
+	if (philo->id % 2 == 0 || philo->id == philo->data->num_of_philo)
+		sleeping(philo);
+	while (philo->data->end == 1
+			/* && philo->eating < philo->data->philo_eat_limit */)
 	{
-
+		eating(philo);
+		if (philo->data->end == 0)
+			break ;
+		sleeping(philo);
 		thinking(philo);
-		// eating(philo);
-		// sleeping(philo);
 	}
 	return (NULL);
 }
 
-void	ft_initialize_data(t_philosopher *philo)
+void	ft_initialize_data(t_philosopher *philo, t_info *argument)
 {
 	int	i;
 
 	i = 0;
-	while (i < philo->data.num_of_philo)
+	while (i < argument->num_of_philo)
 	{
+		philo[i].data = argument;
 		philo[i].id = i + 1;
-		philo[i].right_fork = i;
-		philo[i].left_fork = i - 1;
+		philo[i].fork.right_fork = i;
+		philo[i].fork.left_fork = i - 1;
 		if (i == 0)
-			philo[i].left_fork = philo->data.num_of_philo;
+			philo[i].fork.left_fork = philo->data->num_of_philo - 1;
+		pthread_mutex_init(&philo[i].fork.mutex_right_f, NULL);
+		pthread_mutex_init(&philo[i].fork.mutex_left_f, NULL);
 		i++;
 	}
 }
-
 void	create_philos(t_philosopher *philo)
 {
 	int	i;
 
 	i = 0;
-	i = 0;
-	while (i < philo->data.num_of_philo)
+	while (i < philo->data->num_of_philo)
 	{
-		if (pthread_create(&philo[i].theard, NULL, thread_function,
-				&philo[i]) != 0)
+		if (pthread_create(&philo[i].theard, NULL, &routine, &philo[i]) != 0)
 		{
 			ft_put_error("Failed to Create The Theard");
 			return ;
@@ -58,7 +64,7 @@ void	create_philos(t_philosopher *philo)
 		i++;
 	}
 	i = 0;
-	while (i < philo->data.num_of_philo)
+	while (i < philo->data->num_of_philo)
 	{
 		if (pthread_join(philo[i].theard, NULL) != 0)
 		{
@@ -69,9 +75,9 @@ void	create_philos(t_philosopher *philo)
 	}
 }
 
-int	ft_check_arg(t_check argument)
+int	ft_check_arg(t_info *argument)
 {
-	if (argument.num_of_philo <= 0 || argument.time_to_die <= 0)
+	if (argument->num_of_philo <= 0 || argument->time_to_die <= 0)
 	{
 		ft_put_error("We do not allow the use of zero or negative numbers as arguments.");
 		return (0);
@@ -81,7 +87,7 @@ int	ft_check_arg(t_check argument)
 void	ft_start_threads(char **av)
 {
 	t_philosopher	*philosophers;
-	t_check			argument;
+	t_info			argument;
 
 	philosophers = NULL;
 	argument.num_of_philo = ft_atoi(av[1]);
@@ -92,14 +98,17 @@ void	ft_start_threads(char **av)
 		argument.philo_eat_limit = ft_atoi(av[5]);
 	else
 		argument.philo_eat_limit = 0;
-	if (!ft_check_arg(argument))
+	if (!ft_check_arg(&argument))
 		return ;
 	philosophers = malloc(argument.num_of_philo * sizeof(t_philosopher));
 	if (!philosophers)
 		return ;
-	philosophers->data = argument;
-	ft_initialize_data(philosophers);
+	philosophers->creation_time = ft_get_time();
+	ft_initialize_data(philosophers, &argument);
+	ft_initialize_value(philosophers);
 	create_philos(philosophers);
+	free(philosophers);
+	pthread_mutex_destroy(&mutex);
 }
 int	main(int ac, char **av)
 {

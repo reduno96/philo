@@ -16,17 +16,24 @@ void	*routine(void *arg)
 {
 	t_philosopher	*philo;
 
+	// int				i;
 	philo = (t_philosopher *)arg;
-	if (philo->id % 2 == 0 || philo->id == philo->data->num_of_philo)
-		sleeping(philo);
+	// if (philo->id % 2 == 0 || philo->id == philo->data->num_of_philo)
+	// 	sleeping(philo);
+	// i = 0;
+	// printf("Philosopher %d is fork.left_fork %d\n", philo[i].id,
+	// 	philo[i].data->fork.left_fork);
 	while (philo->data->end == 1
 			/* && philo->eating < philo->data->philo_eat_limit */)
 	{
-		eating(philo);
-		if (philo->data->end == 0)
-			break ;
-		sleeping(philo);
-		thinking(philo);
+		// printf("\e[4;30m Philosopher %d is fork.left_fork.\n",
+		// 	philo->data->fork.left_fork);
+		// printf("\e[3;34m Philosopher %d is fork.right.\n",
+		// 	philo->data->fork.right_fork);
+		// usleep(2000000);
+		// eating(philo);
+		// thinking(philo);
+		// sleeping(philo);
 	}
 	return (NULL);
 }
@@ -39,15 +46,30 @@ void	ft_initialize_data(t_philosopher *philo, t_info *argument)
 	while (i < argument->num_of_philo)
 	{
 		philo[i].data = argument;
-		philo[i].id = i + 1;
-		philo[i].fork.right_fork = i;
-		philo[i].fork.left_fork = i - 1;
-		if (i == 0)
-			philo[i].fork.left_fork = philo->data->num_of_philo - 1;
-		pthread_mutex_init(&philo[i].fork.mutex_right_f, NULL);
-		pthread_mutex_init(&philo[i].fork.mutex_left_f, NULL);
+		philo[i].creation_time = ft_get_time();
 		i++;
 	}
+	i = 0;
+	while (i < argument->num_of_philo)
+	{
+		philo[i].id = i + 1;
+		philo[i].data->fork.right_fork = i;
+		philo[i].data->fork.left_fork = (i + 1) % argument->num_of_philo;
+		i++;
+	}
+	i = 0;
+	while (i < argument->num_of_philo)
+	{
+		printf("Philosopher %d is fork.right_fork %d\n", philo[i].id,
+			philo[i].data->fork.right_fork);
+		// Corrected the access to fork[i]
+		printf("Philosopher %d is fork.left_fork %d\n", philo[i].id,
+			philo[i].data->fork.left_fork);
+		// Corrected the access to fork[i]
+		printf("\n");
+		i++;
+	}
+	i = 0;
 }
 void	create_philos(t_philosopher *philo)
 {
@@ -103,7 +125,6 @@ void	ft_start_threads(char **av)
 	philosophers = malloc(argument.num_of_philo * sizeof(t_philosopher));
 	if (!philosophers)
 		return ;
-	philosophers->creation_time = ft_get_time();
 	ft_initialize_data(philosophers, &argument);
 	ft_initialize_value(philosophers);
 	create_philos(philosophers);

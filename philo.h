@@ -7,6 +7,14 @@
 # include <sys/time.h>
 # include <unistd.h>
 
+typedef struct s_fork
+{
+	int				left_fork;
+	int				right_fork;
+	pthread_mutex_t	mutex_right_f;
+	pthread_mutex_t	mutex_left_f;
+}					t_fork;
+
 typedef struct s_info
 {
 	int				num_of_philo;
@@ -17,13 +25,6 @@ typedef struct s_info
 	int				end;
 	t_fork			fork;
 }					t_info;
-
-typedef struct s_fork
-{
-	int				left_fork;
-	int				right_fork;
-	pthread_mutex_t	mutex_fork;
-}					t_fork;
 
 typedef struct s_philosopher
 {
@@ -41,6 +42,8 @@ void				thinking(t_philosopher *philosopher);
 void				eating(t_philosopher *philosopher);
 void				sleeping(t_philosopher *philosopher);
 int					ft_atoi(const char *str);
+long long			ft_get_time(void);
+long long			ft_time_passed(long long time);
 long long			ft_get_time(void);
 
 #endif

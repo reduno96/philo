@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utiles.c                                           :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rel-mora <reduno96@gmail.com>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:05:11 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/07/03 09:19:53 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/07/07 07:09:10 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,4 +35,19 @@ int	ft_atoi(const char *str)
 		i++;
 	}
 	return ((int)(result * sign));
+}
+
+long long	ft_get_time(void)
+{
+	struct timeval	time;
+	long long		ms;
+
+	gettimeofday(&time, NULL);
+	ms = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+	return (ms);
+}
+
+long long	ft_time_passed(long long time)
+{
+	return (ft_get_time() - time);
 }

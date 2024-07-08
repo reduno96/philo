@@ -12,64 +12,73 @@ void	ft_initialize_value(t_philosopher *philo)
 	philo->last_meal = 0;
 	philo->data->end = 1;
 }
+
 void	*routine(void *arg)
 {
 	t_philosopher	*philo;
 
-	// int				i;
 	philo = (t_philosopher *)arg;
-	// if (philo->id % 2 == 0 || philo->id == philo->data->num_of_philo)
-	// 	sleeping(philo);
-	// i = 0;
-	// printf("Philosopher %d is fork.left_fork %d\n", philo[i].id,
-	// 	philo[i].data->fork.left_fork);
+	if (philo->id % 2 == 0 || philo->id == philo->data->num_of_philo)
+		sleeping(philo);
 	while (philo->data->end == 1
 			/* && philo->eating < philo->data->philo_eat_limit */)
 	{
-		// printf("\e[4;30m Philosopher %d is fork.left_fork.\n",
-		// 	philo->data->fork.left_fork);
-		// printf("\e[3;34m Philosopher %d is fork.right.\n",
-		// 	philo->data->fork.right_fork);
-		// usleep(2000000);
-		// eating(philo);
+		eating(philo);
 		// thinking(philo);
 		// sleeping(philo);
 	}
 	return (NULL);
 }
 
-void	ft_initialize_data(t_philosopher *philo, t_info *argument)
+// void	ft_initialize_data(t_philosopher *philo, t_share *argument)
+// {
+// 	int		i;
+// 	t_fork	*forks;
+
+// 	forks = malloc(argument->num_of_philo * sizeof(t_fork));
+// 	i = 0;
+// 	while (i < argument->num_of_philo)
+// 	{
+// 		philo[i].data = argument;
+// 		philo[i].creation_time = ft_get_time();
+// 		philo[i].id = i + 1;
+// 		philo[i].j = i;
+// 		forks[i].right_fork = i;
+// 		forks[i].left_fork = (i + 1) % philo[i].data->num_of_philo;
+// 		philo[i].data->forks = forks;
+// 		pthread_mutex_init(&philo[i].data->forks[i].mutex_right_f, NULL);
+// 		pthread_mutex_init(&philo[i].data->forks[(i + 1)
+// 			% philo[i].data->num_of_philo].mutex_left_f, NULL);
+// 		i++;
+// 	}
+// 	i = 0;
+// 	while (i < argument->num_of_philo)
+// 	{
+// 		i++;
+// 	}
+// }
+
+void	ft_initialize_data(t_philosopher *philo, t_share *argument)
 {
 	int	i;
 
+	argument->forks = malloc(argument->num_of_philo * sizeof(t_fork));
 	i = 0;
 	while (i < argument->num_of_philo)
 	{
-		philo[i].data = argument;
 		philo[i].creation_time = ft_get_time();
-		i++;
-	}
-	i = 0;
-	while (i < argument->num_of_philo)
-	{
 		philo[i].id = i + 1;
-		philo[i].data->fork.right_fork = i;
-		philo[i].data->fork.left_fork = (i + 1) % argument->num_of_philo;
+		philo[i].j = i;
+		argument->forks[i].right_fork = i;
+		pthread_mutex_init(&argument->forks[i].mutex, NULL);
+		philo[i].data = argument;
 		i++;
 	}
 	i = 0;
 	while (i < argument->num_of_philo)
 	{
-		printf("Philosopher %d is fork.right_fork %d\n", philo[i].id,
-			philo[i].data->fork.right_fork);
-		// Corrected the access to fork[i]
-		printf("Philosopher %d is fork.left_fork %d\n", philo[i].id,
-			philo[i].data->fork.left_fork);
-		// Corrected the access to fork[i]
-		printf("\n");
 		i++;
 	}
-	i = 0;
 }
 void	create_philos(t_philosopher *philo)
 {
@@ -97,7 +106,7 @@ void	create_philos(t_philosopher *philo)
 	}
 }
 
-int	ft_check_arg(t_info *argument)
+int	ft_check_arg(t_share *argument)
 {
 	if (argument->num_of_philo <= 0 || argument->time_to_die <= 0)
 	{
@@ -109,7 +118,7 @@ int	ft_check_arg(t_info *argument)
 void	ft_start_threads(char **av)
 {
 	t_philosopher	*philosophers;
-	t_info			argument;
+	t_share			argument;
 
 	philosophers = NULL;
 	argument.num_of_philo = ft_atoi(av[1]);

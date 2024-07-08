@@ -9,13 +9,11 @@
 
 typedef struct s_fork
 {
-	int				left_fork;
 	int				right_fork;
-	pthread_mutex_t	mutex_right_f;
-	pthread_mutex_t	mutex_left_f;
+	pthread_mutex_t	mutex;
 }					t_fork;
 
-typedef struct s_info
+typedef struct s_share
 {
 	int				num_of_philo;
 	int				time_to_die;
@@ -23,18 +21,19 @@ typedef struct s_info
 	int				philo_eat_limit;
 	int				time_to_sleep;
 	int				end;
-	t_fork			fork;
-}					t_info;
+	t_fork			*forks;
+}					t_share;
 
 typedef struct s_philosopher
 {
-	pthread_t		theard;
 	int				id;
-	t_info			*data;
+	int				j;
 	long long		creation_time;
 	int				think;
 	int				eating;
 	size_t			last_meal;
+	pthread_t		theard;
+	t_share			*data;
 }					t_philosopher;
 
 void				ft_put_error(char *s);

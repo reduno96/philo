@@ -6,46 +6,64 @@
 /*   By: rel-mora <reduno96@gmail.com>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 08:49:18 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/07/08 10:27:44 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/07/09 08:34:20 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	ft_print_actions(t_philosopher *philo, char action)
+int	ft_time_to_die(t_philosopher *philo)
 {
-	if (action == 'T')
-		printf("\e[4;36m Philosopher %d is thinking.\n", philo->id);
+	if ((get_time_passed(philo->last_meal) > philo->data->time_to_die))
+	{
+		printf("heeeere is time to die\n");
+		pthread_mutex_lock(&philo->data->print);
+		ft_print_actions(philo, 'D');
+		pthread_mutex_unlock(&philo->data->print);
+		pthread_mutex_unlock(&philo->data->forks[philo->j].mutex);
+		pthread_mutex_unlock(&philo->data->forks[(philo->j + 1)
+			% philo->data->num_of_philo].mutex);
+		philo->data->end = 0;
+		return (1);
+		pthread_mutex_unlock(&philo->data->print);
+	}
+	return (0);
 }
 
-void	eating(t_philosopher *philo)
+int	ft_usleep_to_eat(t_philosopher *philo)
 {
-	pthread_mutex_lock(&philo->data->forks[philo->j].mutex);
-	pthread_mutex_lock(&philo->data->forks[(philo->j + 1)
-		% philo->data->num_of_philo].mutex);
-	printf("\e[1;33m Philosopher %d has taken a fork right is %d .\n",
-		philo->id, philo->data->forks[philo->j].right_fork);
-	printf("\e[1;35m Philosopher %d has taken a fork left is %d .\n", philo->id,
-		philo->data->forks[(philo->j + 1)
-		% philo->data->num_of_philo].right_fork);
+	long long	time;
+
+	time = get_time_passed(philo->last_meal);
+	while (time < philo->data->time_to_eat)
+	{
+		if (ft_time_to_die(philo))
+			return (1);
+		time = get_time_passed(philo->last_meal);
+	}
+	return (0);
+}
+
+int	eating(t_philosopher *philo)
+{
+	ft_grab_forks(philo);
+	ft_print_actions(philo, 'R');
+	ft_print_actions(philo, 'E');
+	philo->eating++;
+	philo->last_meal = ft_get_time();
+	if (ft_usleep_to_eat(philo) || ft_time_to_die(philo))
+	{
+		printf("Here mn eating fuctio \n");
+		ft_print_actions(philo, 'D');
+		pthread_mutex_unlock(&philo->data->forks[philo->j].mutex);
+		pthread_mutex_unlock(&philo->data->forks[(philo->j + 1)
+			% philo->data->num_of_philo].mutex);
+		return (1);
+	}
 	pthread_mutex_unlock(&philo->data->forks[philo->j].mutex);
 	pthread_mutex_unlock(&philo->data->forks[(philo->j + 1)
 		% philo->data->num_of_philo].mutex);
-	// printf("\e[1;33m Philosopher %d has taken a fork left is %d .\n",
-	//	philo->id,
-	// 	philo->data->fork.left_fork);
-	// philo->eating++;
-	// printf(" \033[0;91mPhilosopher %d is a eating.\n", philo->id);
-	// printf("\e[0;34m Philosopher %d has finished eating.\n", philo->id);
-	// philo->last_meal = ft_get_time();
-	// if (ft_time_passed(philo->last_meal) <= philo->data->time_to_eat)
-	// {
-	// 	printf("\e[0;31m Philosopher %d died.\n", philo->id);
-	// 	philo->data->end = 0;
-	// 	return ;
-	// }
-	printf("------------------\n");
-	usleep(philo->data->time_to_eat * 1000);
+	return (0);
 }
 
 void	thinking(t_philosopher *philo)
@@ -55,6 +73,6 @@ void	thinking(t_philosopher *philo)
 
 void	sleeping(t_philosopher *philo)
 {
-	printf("\e[0;30m Philosopher %d is sleeping.\n", philo->id);
+	ft_print_actions(philo, 'S');
 	usleep(philo->data->time_to_sleep * 1000);
 }

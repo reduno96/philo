@@ -6,7 +6,7 @@
 /*   By: rel-mora <reduno96@gmail.com>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 18:00:03 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/07/09 08:38:39 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/07/09 08:49:14 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,18 +69,13 @@ void	*routine(void *arg)
 	{
 		if (eating(philo))
 			break ;
+		usleep(10000);
 		thinking(philo);
 		sleeping(philo);
-		printf("==>%d\n", (philo->data->time_to_eat
-				+ philo->data->time_to_sleep));
 		if (get_time_passed(philo->last_meal) > philo->data->time_to_die
 			|| (philo->data->time_to_eat
 				+ philo->data->time_to_sleep) > philo->data->time_to_die)
 		{
-			printf("%d //// %lld \n", (philo->data->time_to_eat
-					+ philo->data->time_to_sleep),
-				get_time_passed(philo->last_meal));
-			printf("Here mn routing fucntion men condition \n");
 			ft_print_actions(philo, 'D');
 			philo->data->end = 0;
 			break ;

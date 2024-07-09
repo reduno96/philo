@@ -6,7 +6,7 @@
 /*   By: rel-mora <reduno96@gmail.com>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:05:11 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/07/09 08:37:24 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/07/09 08:45:05 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ int	ft_atoi(const char *str)
 
 void	ft_grab_forks(t_philosopher *philo)
 {
-	usleep(100);
 	pthread_mutex_lock(&philo->data->forks[philo->j].mutex);
 	pthread_mutex_lock(&philo->data->forks[(philo->j + 1)
 		% philo->data->num_of_philo].mutex);

@@ -6,7 +6,7 @@
 /*   By: rel-mora <reduno96@gmail.com>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 08:49:18 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/07/09 08:34:20 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/07/09 08:52:34 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ int	ft_time_to_die(t_philosopher *philo)
 {
 	if ((get_time_passed(philo->last_meal) > philo->data->time_to_die))
 	{
-		printf("heeeere is time to die\n");
 		pthread_mutex_lock(&philo->data->print);
 		ft_print_actions(philo, 'D');
 		pthread_mutex_unlock(&philo->data->print);
@@ -53,7 +52,6 @@ int	eating(t_philosopher *philo)
 	philo->last_meal = ft_get_time();
 	if (ft_usleep_to_eat(philo) || ft_time_to_die(philo))
 	{
-		printf("Here mn eating fuctio \n");
 		ft_print_actions(philo, 'D');
 		pthread_mutex_unlock(&philo->data->forks[philo->j].mutex);
 		pthread_mutex_unlock(&philo->data->forks[(philo->j + 1)

@@ -6,9 +6,13 @@
 /*   By: rel-mora <reduno96@gmail.com>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 18:00:03 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/07/09 00:11:53 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/07/09 08:49:24 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+printf("==>%d\n", (philo->data->time_to_eat + philo->data->time_to_sleep));
+printf("%d //// (%lld) \n", (philo->data->time_to_eat
+		+ philo->data->time_to_sleep), get_time_passed(philo->last_meal));
 
 #include "philo.h"
 #include <pthread.h>

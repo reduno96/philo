@@ -6,7 +6,7 @@
 /*   By: rel-mora <reduno96@gmail.com>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 18:00:03 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/07/09 08:49:14 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/07/09 11:37:31 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void	*routine(void *arg)
 	if (philo->id % 2 == 0 || philo->id == philo->data->num_of_philo)
 		sleeping(philo);
 	while (philo->data->end == 1
-			/* && philo->eating < philo->data->philo_eat_limit */)
+		&& philo->eating < philo->data->philo_eat_limit)
 	{
 		if (eating(philo))
 			break ;
@@ -144,8 +144,8 @@ void	ft_start_threads(char **av)
 {
 	t_philosopher	*philosophers;
 	t_share			argument;
+	int				i;
 
-	// int				i;
 	philosophers = NULL;
 	argument.num_of_philo = ft_atoi(av[1]);
 	argument.time_to_die = ft_atoi(av[2]);
@@ -155,7 +155,7 @@ void	ft_start_threads(char **av)
 		argument.philo_eat_limit = ft_atoi(av[5]);
 	else
 	{
-		argument.philo_eat_limit = 0;
+		argument.philo_eat_limit = 100000000;
 		argument.limit = -1;
 	}
 	if (!ft_check_arg(&argument))
@@ -166,11 +166,12 @@ void	ft_start_threads(char **av)
 	ft_initialize_data(philosophers, &argument);
 	ft_initialize_value(philosophers);
 	create_philos(philosophers);
-	free(philosophers);
 	pthread_mutex_destroy(&argument.print);
-	// i = 0;
-	// while (argument.num_of_philo > i)
-	// 	pthread_mutex_destroy(&argument.forks->mutex);
+	i = 0;
+	while (argument.num_of_philo > i)
+		pthread_mutex_destroy(&argument.forks[i].mutex);
+	free(philosophers);
+	free(argument.forks);
 }
 int	main(int ac, char **av)
 {

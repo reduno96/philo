@@ -6,7 +6,7 @@
 /*   By: rel-mora <reduno96@gmail.com>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:05:11 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/07/07 07:09:10 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/07/09 08:37:24 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,15 @@ int	ft_atoi(const char *str)
 	return ((int)(result * sign));
 }
 
+void	ft_grab_forks(t_philosopher *philo)
+{
+	usleep(100);
+	pthread_mutex_lock(&philo->data->forks[philo->j].mutex);
+	pthread_mutex_lock(&philo->data->forks[(philo->j + 1)
+		% philo->data->num_of_philo].mutex);
+	ft_print_actions(philo, 'G');
+}
+
 long long	ft_get_time(void)
 {
 	struct timeval	time;
@@ -47,7 +56,7 @@ long long	ft_get_time(void)
 	return (ms);
 }
 
-long long	ft_time_passed(long long time)
+long long	get_time_passed(long long time)
 {
 	return (ft_get_time() - time);
 }

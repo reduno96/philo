@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.c                                            :+:      :+:    :+:   */
+/*   prin.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rel-mora <reduno96@gmail.com>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 18:00:03 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/07/09 08:38:39 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/07/09 00:11:53 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,20 +69,16 @@ void	*routine(void *arg)
 	{
 		if (eating(philo))
 			break ;
-		thinking(philo);
-		sleeping(philo);
-		printf("==>%d\n", (philo->data->time_to_eat
-				+ philo->data->time_to_sleep));
+		if (thinking(philo))
+			break ;
+		if (sleeping(philo))
+			break ;
 		if (get_time_passed(philo->last_meal) > philo->data->time_to_die
-			|| (philo->data->time_to_eat
-				+ philo->data->time_to_sleep) > philo->data->time_to_die)
+			|| (get_time_passed(philo->last_meal) > philo->data->time_to_eat
+				+ philo->data->time_to_sleep))
 		{
-			printf("%d //// %lld \n", (philo->data->time_to_eat
-					+ philo->data->time_to_sleep),
-				get_time_passed(philo->last_meal));
-			printf("Here mn routing fucntion men condition \n");
-			ft_print_actions(philo, 'D');
 			philo->data->end = 0;
+			ft_print_actions(philo, 'D');
 			break ;
 		}
 	}
@@ -145,12 +141,56 @@ int	ft_check_arg(t_share *argument)
 	}
 	return (1);
 }
+
+void	*routine_one_philo(void *arg)
+{
+	t_philosopher	*philo;
+
+	philo = (t_philosopher *)arg;
+	while (1)
+	{
+		printf("%lld %d has taken a fork\n",
+			get_time_passed(philo->creation_time), philo->id);
+		printf("%lld %d is eating\n", get_time_passed(philo->creation_time),
+			philo->id);
+		philo->last_meal = ft_get_time();
+		if (ft_usleep_to_eat(philo)
+			|| get_time_passed(philo->last_meal) > philo->data->time_to_die
+			|| (philo->data->time_to_sleep
+				+ philo->data->time_to_eat) > philo->data->time_to_die)
+		{
+			printf("%lld %d died\n", get_time_passed(philo->creation_time),
+				philo->id);
+			break ;
+		}
+		printf("%lld %d is thinking\n", get_time_passed(philo->creation_time),
+			philo->id);
+		printf("%lld %d is sleeping\n", get_time_passed(philo->creation_time),
+			philo->id);
+		usleep(philo->data->time_to_sleep * 1000);
+	}
+	return (NULL);
+}
+void	create_one_philo(t_philosopher *philo)
+{
+	if (pthread_create(&philo->theard, NULL, routine_one_philo, philo) != 0)
+	{
+		ft_put_error("Failed to Create The Theard");
+		return ;
+	}
+	if (pthread_join(philo->theard, NULL) != 0)
+	{
+		ft_put_error("Failed To Join Thread");
+		return ;
+	}
+}
+
 void	ft_start_threads(char **av)
 {
 	t_philosopher	*philosophers;
 	t_share			argument;
+	int				i;
 
-	// int				i;
 	philosophers = NULL;
 	argument.num_of_philo = ft_atoi(av[1]);
 	argument.time_to_die = ft_atoi(av[2]);
@@ -170,12 +210,18 @@ void	ft_start_threads(char **av)
 		return ;
 	ft_initialize_data(philosophers, &argument);
 	ft_initialize_value(philosophers);
-	create_philos(philosophers);
+	if (philosophers->data->num_of_philo == 1)
+		create_one_philo(philosophers);
+	else
+		create_philos(philosophers);
 	free(philosophers);
 	pthread_mutex_destroy(&argument.print);
-	// i = 0;
-	// while (argument.num_of_philo > i)
-	// 	pthread_mutex_destroy(&argument.forks->mutex);
+	i = 0;
+	while (argument.num_of_philo > i)
+	{
+		pthread_mutex_destroy(&argument.forks[i].mutex);
+		i++;
+	}
 }
 int	main(int ac, char **av)
 {

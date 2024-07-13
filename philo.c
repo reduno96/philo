@@ -6,7 +6,7 @@
 /*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 18:00:03 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/07/12 17:38:40 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/07/13 20:54:11 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,19 +28,19 @@ void	ft_print_actions(t_philosopher *philo, char action)
 	{
 		if (action == 'T')
 			printf("%lld %d is thinking\n",
-				get_time_passed(philo->creation_time), philo->id);
+				get_time_passed(philo->creation_time, philo), philo->id);
 		else if (action == 'R')
 			printf("%lld %d has taken a fork\n",
-				get_time_passed(philo->creation_time), philo->id);
+				get_time_passed(philo->creation_time, philo), philo->id);
 		else if (action == 'L')
 			printf("%lld %d has taken a fork\n",
-				get_time_passed(philo->creation_time), philo->id);
+				get_time_passed(philo->creation_time, philo), philo->id);
 		else if (action == 'E')
-			printf("%lld %d is eating\n", get_time_passed(philo->creation_time),
+			printf("%lld %d is eating\n", get_time_passed(philo->creation_time, philo),
 				philo->id);
 		else if (action == 'S')
 			printf("%lld %d is sleeping\n",
-				get_time_passed(philo->creation_time), philo->id);
+				get_time_passed(philo->creation_time, philo), philo->id);
 	}
 	pthread_mutex_unlock(&philo->data->mtx_print);
 }
@@ -119,10 +119,11 @@ void	ft_initialize_data(t_philosopher *philo, t_share *argument)
 	}
 	pthread_mutex_init(&argument->mtx_print, NULL);
 	pthread_mutex_init(&argument->mtx_end, NULL);
+	pthread_mutex_init(&argument->mtx_get_time, NULL);
 }
 void	ft_print_died(t_philosopher philo)
 {
-	printf("%lld %d died\n", get_time_passed(philo.creation_time), philo.id);
+	printf("%lld %d died\n", get_time_passed(philo.creation_time, philo), philo.id);
 }
 void	create_philos(t_philosopher *philo)
 {
@@ -170,24 +171,24 @@ void	*routine_one_philo(void *arg)
 	while (1)
 	{
 		printf("%lld %d has taken a fork\n",
-			get_time_passed(philo->creation_time), philo->id);
-		printf("%lld %d is eating\n", get_time_passed(philo->creation_time),
+			get_time_passed(philo->creation_time, philo), philo->id);
+		printf("%lld %d is eating\n", get_time_passed(philo->creation_time, philo),
 			philo->id);
 		philo->last_meal = ft_get_time();
 		if (ft_usleep_to_eat(philo)
-			|| get_time_passed(philo->last_meal) > philo->data->time_to_die
+			|| get_time_passed(philo->last_meal, philo) > philo->data->time_to_die
 			|| (philo->data->time_to_sleep
 				+ philo->data->time_to_eat) > philo->data->time_to_die)
 		{
-			printf("%lld %d died\n", get_time_passed(philo->creation_time),
+			printf("%lld %d died\n", get_time_passed(philo->creation_time, philo),
 				philo->id);
 			break ;
 		}
-		printf("%lld %d is thinking\n", get_time_passed(philo->creation_time),
+		printf("%lld %d is thinking\n", get_time_passed(philo->creation_time, philo),
 			philo->id);
-		printf("%lld %d is sleeping\n", get_time_passed(philo->creation_time),
+		printf("%lld %d is sleeping\n", get_time_passed(philo->creation_time,  philo),
 			philo->id);
-		usleep(philo->data->time_to_sleep * 1000);
+		ft_usleep(philo->data->time_to_sleep );
 	}
 	return (NULL);
 }

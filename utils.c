@@ -6,7 +6,7 @@
 /*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:05:11 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/07/12 11:31:34 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/07/13 20:46:57 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,12 @@ long long	ft_get_time(void)
 	return (ms);
 }
 
-long long	get_time_passed(long long time)
+long long	get_time_passed(t_philosopher *philo, long long time)
 {
-	return (ft_get_time() - time);
+	long long var;
+
+	pthread_mutex_lock(&philo->data->mtx_get_time);
+	var =  ft_get_time() - time;
+	pthread_mutex_lock(&philo->data->mtx_get_time);
+	return (var);
 }

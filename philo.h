@@ -25,6 +25,7 @@ typedef struct s_share
 	t_fork			*forks;
 	pthread_mutex_t	mtx_end;
 	pthread_mutex_t	mtx_print;
+	pthread_mutex_t mtx_get_time;
 }					t_share;
 
 typedef struct s_philosopher
@@ -51,7 +52,7 @@ int					ft_usleep_to_eat(t_philosopher *philo);
 int					ft_usleep(size_t milliseconds);
 int					ft_atoi(const char *str);
 long long			ft_get_time(void);
-long long			get_time_passed(long long time);
+long long	get_time_passed(t_philosopher *philo, long long time);
 long long			ft_get_time(void);
 void				ft_print_died(t_philosopher philo);
 void				*routine_one_philo(void *arg);

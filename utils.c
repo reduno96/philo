@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rel-mora <reduno96@gmail.com>              +#+  +:+       +#+        */
+/*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:05:11 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/07/09 08:45:05 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/07/13 18:36:59 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,10 @@ int	ft_atoi(const char *str)
 void	ft_grab_forks(t_philosopher *philo)
 {
 	pthread_mutex_lock(&philo->data->forks[philo->j].mutex);
+	ft_print_actions(philo, 'R');
 	pthread_mutex_lock(&philo->data->forks[(philo->j + 1)
 		% philo->data->num_of_philo].mutex);
-	ft_print_actions(philo, 'G');
+	ft_print_actions(philo, 'L');
 }
 
 long long	ft_get_time(void)

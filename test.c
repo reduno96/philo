@@ -1,60 +1,29 @@
-#include <pthread.h>
 #include <stdio.h>
-#include <stdlib.h>
+#include <sys/types.h>
+#include <unistd.h>
 
-int				mails = 0;
-pthread_mutex_t	mutex;
+int main() {
+    pid_t pid;
+	int i = 10;
 
-void	*routine(void)
-{
-	for (int i = 0; i < 10000000; i++)
-	{
-		pthread_mutex_lock(&mutex);
-		mails++;
-		pthread_mutex_unlock(&mutex);
-		// read mails
-		// increment
-		// write mails
-	}
-}
+    /* fork a child process */
+    pid = fork();
 
-int	main(void)
-{
-	pthread_t p1, p2, p3, p4;
-	pthread_mutex_init(&mutex, NULL);
-	if (pthread_create(&p1, NULL, &routine, NULL) != 0)
-	{
-		return (1);
-	}
-	if (pthread_create(&p2, NULL, &routine, NULL) != 0)
-	{
-		return (2);
-	}
-	if (pthread_create(&p3, NULL, &routine, NULL) != 0)
-	{
-		return (3);
-	}
-	if (pthread_create(&p4, NULL, &routine, NULL) != 0)
-	{
-		return (4);
-	}
-	if (pthread_join(p1, NULL) != 0)
-	{
-		return (5);
-	}
-	if (pthread_join(p2, NULL) != 0)
-	{
-		return (6);
-	}
-	if (pthread_join(p3, NULL) != 0)
-	{
-		return (7);
-	}
-	if (pthread_join(p4, NULL) != 0)
-	{
-		return (8);
-	}
-	pthread_mutex_destroy(&mutex);
-	printf("Number of mails: %d\n", mails);
-	return (0);
+    if (pid < 0) { /* error occurred */
+        fprintf(stderr, "Fork Failed");
+        return 1;
+    }
+    else if (pid == 0) { /* child process */
+        printf("I am the child, PID = %d\n", getpid());
+		i = 20;
+		printf("child value is %d \n",i);
+    }
+    else { /* parent process */
+        /* parent will wait for the child to complete */
+        wait(NULL);
+        printf("Child Complete\n");
+    }
+	printf(" value is %d \n",i);
+
+    return 0;
 }

@@ -5,7 +5,7 @@ SRC= philo.c \
 
 OBJ= ${SRC:%.c=%.o}
 
-CFLAGS= -Wall -Wextra -Werror -pthread -g 
+CFLAGS= -Wall -Wextra -Werror -pthread -g
 CC = cc
 
 
@@ -19,3 +19,5 @@ ${NAME}: ${OBJ} philo.h
 clean :
 	rm -rf  ${NAME}  ${OBJ}
 
+
+re : clean all

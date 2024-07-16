@@ -2,6 +2,8 @@ SRC= philo.c \
 	 errors.c \
 	 ft_state.c \
 	 utils.c \
+	 ft_create_threads.c \
+	 ft_all_mutex.c \
 
 OBJ= ${SRC:%.c=%.o}
 

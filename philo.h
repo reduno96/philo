@@ -15,6 +15,7 @@ typedef struct s_fork
 
 typedef struct s_share
 {
+	long long		creation_time;
 	int				num_of_philo;
 	int				time_to_die;
 	int				time_to_eat;
@@ -25,11 +26,11 @@ typedef struct s_share
 	t_fork			*forks;
 	pthread_mutex_t	mtx_end;
 	pthread_mutex_t	mtx_print;
+	pthread_mutex_t	mtx_time;
 }					t_share;
 
 typedef struct s_philosopher
 {
-	long long		creation_time;
 	int				id;
 	int				j;
 	int				think;
@@ -45,15 +46,16 @@ int					ft_get_end_value(t_philosopher *philo);
 void				ft_change_end_value(t_philosopher *philo);
 void				ft_grab_forks(t_philosopher *philo);
 int					eating(t_philosopher *philosopher);
-int				thinking(t_philosopher *philosopher);
-int				sleeping(t_philosopher *philosopher);
-int					ft_usleep_to_eat(t_philosopher *philo);
+int					thinking(t_philosopher *philosopher);
+int					sleeping(t_philosopher *philosopher);
+void				ft_usleep_to_eat(t_philosopher *philo);
 int					ft_usleep(size_t milliseconds);
 int					ft_atoi(const char *str);
 long long			ft_get_time(void);
-long long			get_time_passed(long long time);
+long long			get_time_passed(t_philosopher *philo, long long time);
 long long			ft_get_time(void);
 void				ft_print_died(t_philosopher philo);
-void				*routine_one_philo(void *arg);
+void				create_philos(t_philosopher *philo);
+void				create_one_philo(t_philosopher *philo);
 
 #endif

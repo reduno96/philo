@@ -7,7 +7,8 @@ SRC= philo.c \
 
 OBJ= ${SRC:%.c=%.o}
 
-CFLAGS= -Wall -Wextra -Werror -pthread -g
+# CFLAGS= -Wall -Wextra -Werror -pthread -fsanitize=thread -g
+CFLAGS= -Wall -Wextra -Werror -pthread  -g
 CC = cc
 
 

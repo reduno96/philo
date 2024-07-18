@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_create_threads.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rel-mora <reduno96@gmail.com>              +#+  +:+       +#+        */
+/*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 12:32:43 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/07/16 15:55:31 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/07/18 18:31:57 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,21 +21,26 @@ void	*routine(void *arg)
 		sleeping(philo);
 	while (ft_get_end_value(philo) == 1)
 	{
-		if (philo->eating < philo->data->philo_eat_limit)
-		{
-			if (eating(philo))
-				break ;
-			if (thinking(philo))
-				break ;
-			if (sleeping(philo))
-				break ;
-		}
-		else
-			break ;
+		(thinking(philo));
+		eating(philo);
+		(sleeping(philo));
 	}
 	return (NULL);
 }
 
+int	is_die(t_philosopher *philo)
+{
+	pthread_mutex_lock(&philo->mtx_time);
+	if ((get_time_passed(philo,
+				ft_get_last_meal(philo)) >= (size_t)philo->data->time_to_die))
+	{
+		printf("######%zu -- %zu \n", ft_get_last_meal(philo), ft_get_time());
+		pthread_mutex_unlock(&philo->mtx_time);
+		return (1);
+	}
+	pthread_mutex_unlock(&philo->mtx_time);
+	return (0);
+}
 void	ft_monitor(t_philosopher *philo)
 {
 	int	i;
@@ -45,8 +50,7 @@ void	ft_monitor(t_philosopher *philo)
 	{
 		if (i == philo->data->num_of_philo)
 			i = 0;
-		if ((get_time_passed(philo,
-					philo->last_meal) >= philo->data->time_to_die))
+		if (is_die(&philo[i]))
 		{
 			ft_print_died(philo[i]);
 			break ;
@@ -91,7 +95,7 @@ void	*routine_one_philo(void *arg)
 	philo = (t_philosopher *)arg;
 	ft_print_actions(philo, 'R');
 	ft_usleep(philo->data->time_to_eat);
-	printf("\033[31m%lld %d died\033[0m\n", get_time_passed(philo,
+	printf("\033[31m%zu %d died\033[0m\n", get_time_passed(philo,
 			philo->data->creation_time), philo->id);
 	return (NULL);
 }

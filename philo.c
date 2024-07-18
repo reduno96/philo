@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rel-mora <reduno96@gmail.com>              +#+  +:+       +#+        */
+/*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 18:00:03 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/07/16 14:45:38 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/07/18 18:08:52 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,19 +26,19 @@ void	ft_print_actions(t_philosopher *philo, char action)
 	if (ft_get_end_value(philo) == 1)
 	{
 		if (action == 'T')
-			printf("%lld %d is thinking\n", get_time_passed(philo,
+			printf("%zu %d is thinking\n", get_time_passed(philo,
 					philo->data->creation_time), philo->id);
 		else if (action == 'R')
-			printf("%lld %d has taken a fork\n", get_time_passed(philo,
+			printf("%zu %d has taken a fork\n", get_time_passed(philo,
 					philo->data->creation_time), philo->id);
 		else if (action == 'L')
-			printf("%lld %d has taken a fork\n", get_time_passed(philo,
+			printf("%zu %d has taken a fork\n", get_time_passed(philo,
 					philo->data->creation_time), philo->id);
 		else if (action == 'E')
-			printf("%lld %d is eating\n", get_time_passed(philo,
+			printf("%zu %d is eating\n", get_time_passed(philo,
 					philo->data->creation_time), philo->id);
 		else if (action == 'S')
-			printf("%lld %d is sleeping\n", get_time_passed(philo,
+			printf("%zu %d is sleeping\n", get_time_passed(philo,
 					philo->data->creation_time), philo->id);
 	}
 	pthread_mutex_unlock(&philo->data->mtx_print);
@@ -60,27 +60,30 @@ void	ft_initialize_data(t_philosopher *philo, t_share *argument)
 {
 	int	i;
 
-	argument->forks = malloc(argument->num_of_philo * sizeof(t_fork));
-	argument->creation_time = ft_get_time();
 	i = 0;
+	argument->forks = malloc(argument->num_of_philo * sizeof(t_fork));
+	if (!argument->forks)
+		return ;
+	argument->creation_time = ft_get_time();
 	while (i < argument->num_of_philo)
 	{
-		philo[i].last_meal = ft_get_time();
+		philo[i].last_meal = argument->creation_time;
 		philo[i].id = i + 1;
 		philo[i].j = i;
 		argument->forks[i].right_fork = i;
 		pthread_mutex_init(&argument->forks[i].mutex, NULL);
+		pthread_mutex_init(&philo[i].mtx_time, NULL);
+		pthread_mutex_init(&philo[i].mtx_last, NULL);
 		philo[i].data = argument;
 		i++;
 	}
 	pthread_mutex_init(&argument->mtx_print, NULL);
 	pthread_mutex_init(&argument->mtx_end, NULL);
-	pthread_mutex_init(&argument->mtx_time, NULL);
 }
 void	ft_print_died(t_philosopher philo)
 {
 	pthread_mutex_lock(&philo.data->mtx_print);
-	printf("\033[31m%lld %d died\033[0m\n", get_time_passed(&philo,
+	printf("*********\033[31m%zu %d died\033[0m\n", get_time_passed(&philo,
 			philo.data->creation_time), philo.id);
 	ft_change_end_value(&philo);
 	pthread_mutex_unlock(&philo.data->mtx_print);

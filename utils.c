@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rel-mora <reduno96@gmail.com>              +#+  +:+       +#+        */
+/*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:05:11 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/07/16 15:39:53 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/07/18 18:27:47 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,32 +46,30 @@ void	ft_grab_forks(t_philosopher *philo)
 	ft_print_actions(philo, 'L');
 }
 
-long long	ft_get_time(void)
+size_t	ft_get_time(void)
 {
 	struct timeval	time;
-	long long		ms;
+	size_t			ms;
 
 	gettimeofday(&time, NULL);
 	ms = (time.tv_sec * 1000) + (time.tv_usec / 1000);
 	return (ms);
 }
 
-long long	get_time_passed(t_philosopher *philo, long long time)
+size_t	get_time_passed(t_philosopher *philo, size_t time)
 {
-	long long	var;
-
-	pthread_mutex_lock(&philo->data->mtx_time);
-	var = ft_get_time() - time;
-	pthread_mutex_unlock(&philo->data->mtx_time);
-	return (var);
+	(void)philo;
+	return (ft_get_time() - time);
 }
 
 int	ft_usleep(size_t milliseconds)
 {
 	size_t	start;
+	size_t	end;
 
 	start = ft_get_time();
-	while ((ft_get_time() - start) < milliseconds)
-		usleep(100);
+	end = start + milliseconds;
+	while ((ft_get_time()) < end)
+		usleep(200);
 	return (0);
 }

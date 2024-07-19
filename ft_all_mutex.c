@@ -6,7 +6,7 @@
 /*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 13:58:39 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/07/18 18:24:27 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/07/19 19:32:16 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,15 @@ size_t	ft_get_last_meal(t_philosopher *philo)
 	return (r);
 }
 
-// void	ft_change_last_meal(t_philosopher *philo)
+// int	is_die(t_philosopher *philo)
 // {
-// 	pthread_mutex_lock(&philo->mtx_last);
-// 	philo->last_meal = 0;
-// 	pthread_mutex_unlock(&philo->mtx_last);
+// 	pthread_mutex_lock(&philo->mtx_time);
+// 	if ((get_time_passed(philo,
+// 				ft_get_last_meal(philo)) >= (size_t)philo->data->time_to_die))
+// 	{
+// 		pthread_mutex_unlock(&philo->mtx_time);
+// 		return (1);
+// 	}
+// 	pthread_mutex_unlock(&philo->mtx_time);
+// 	return (0);
 // }
-
-

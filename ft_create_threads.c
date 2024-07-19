@@ -6,7 +6,7 @@
 /*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 12:32:43 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/07/18 18:31:57 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/07/19 20:46:21 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ void	*routine(void *arg)
 	philo = (t_philosopher *)arg;
 	if (philo->id % 2 == 0)
 		sleeping(philo);
-	while (ft_get_end_value(philo) == 1)
+	while (ft_get_end_value(philo) == 1
+		&& (philo->data->philo_eat_limit >= philo->eating))
 	{
 		(thinking(philo));
 		eating(philo);
@@ -50,11 +51,16 @@ void	ft_monitor(t_philosopher *philo)
 	{
 		if (i == philo->data->num_of_philo)
 			i = 0;
-		if (is_die(&philo[i]))
+		if (philo[i].data->philo_eat_limit >= philo[i].eating)
 		{
-			ft_print_died(philo[i]);
-			break ;
+			if (is_die(&philo[i]))
+			{
+				ft_print_died(philo[i]);
+				break ;
+			}
 		}
+		else
+			break ;
 		// if (philo[i].eating < philo->data->philo_eat_limit)
 		// 	ft_change_end_value(philo);
 		i++;

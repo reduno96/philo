@@ -6,7 +6,7 @@
 /*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/24 10:16:06 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/07/24 12:16:19 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/07/24 15:20:18 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,10 @@ int	ft_is_not_digit(char **av)
 	j = 0;
 	while (av[i])
 	{
+		j = 0;
 		while (av[i][j])
 		{
-			if (av[i][j] < '0' && av[i][j] > '9')
+			if (!(av[i][j] >= '0' && av[i][j] <= '9'))
 				return (1);
 			j++;
 		}
@@ -39,7 +40,10 @@ void	ft_start_threads(char **av)
 
 	philosophers = NULL;
 	if (ft_is_not_digit(av))
+	{
+		ft_put_error("Error: is not digit");
 		return ;
+	}
 	ft_initialize_argument(&argument, av);
 	if (!ft_check_arg(&argument))
 		return ;
